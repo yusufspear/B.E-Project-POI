@@ -2,14 +2,13 @@ package com.example.geo_interestpoi;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -21,17 +20,15 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-
 public class Register_Page extends AppCompatActivity {
 
 
     private TextInputLayout FullName, Email, Password, Repassword, PhoneNumber;
-    private RadioButton GenderM, GenderFe;
+    private RadioButton GenderM;
     private Button Register;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference mReference;
+    private DatabaseReference mRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +39,7 @@ public class Register_Page extends AppCompatActivity {
         initViews();
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
-        mReference = mDatabase.getReference();
+        mRef = mDatabase.getReference("User");
 
         Register.setOnClickListener(this::createUser);
 
@@ -59,16 +56,30 @@ public class Register_Page extends AppCompatActivity {
         PhoneNumber = findViewById(R.id.et_phone);
         Register = findViewById(R.id.btn_registeruser);
         GenderM= findViewById(R.id.rdMale);
-        GenderFe= findViewById(R.id.rdFemale);
-
-
-
-
     }
+
+
 
     // Read from the database
 
     private void createUser(View view) {
+
+
+        String gender ;
+        String fullName = FullName.getEditText().getText().toString().trim();
+        String phoneNumber = PhoneNumber.getEditText().getText().toString().trim();
+        String email = Email.getEditText().getText().toString().trim();
+        String password = Password.getEditText().getText().toString().trim();
+        String repassword = Repassword.getEditText().getText().toString().trim();
+
+
+        if (GenderM.isChecked()){
+            gender = "Male";
+        }else {
+            gender = "FeMale";
+
+        }
+//        String Uid= mAuth.getUid();
 
 
         if (!validateEmailAddress() | !validatePassword() | !validateName() | !validatePhoneNumber()) {
@@ -76,33 +87,31 @@ public class Register_Page extends AppCompatActivity {
             return;
         }
         //Email and Password valid, create user here
-        String Gender ;
-        String fullName = FullName.getEditText().getText().toString().trim();
-        String phoneNumber = PhoneNumber.getEditText().getText().toString().trim();
-        String email = Email.getEditText().getText().toString().trim();
-        String password = Password.getEditText().getText().toString().trim();
-        String repassword = Repassword.getEditText().getText().toString().trim();
-        if (GenderM.isChecked()){
-            Gender = "Male";
-        }else {
-            Gender = "FeMale";
-
-        }
 
         if (!password.equals(repassword)) {
             Toast.makeText(this, "Password NOT Match", Toast.LENGTH_LONG).show();
             Repassword.setError("Password Not Match!");
         } else {
+            Repassword.setError(null);
+
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                                @Override
                                                public void onComplete(@NonNull Task<AuthResult> task) {
                                                    if (task.isSuccessful()) {
-//                                private void writeNewUser(String mAuth.getUid(), String fullName, String email,String password,String phoneNumber String Gender) {
-                                                       User information = new User(fullName, email, password, phoneNumber, Gender);
+                                                       getValues(fullName, email, password, phoneNumber, gender);
 
-                                                       mDatabase.getReference("https://geo-interest-poi.firebaseio.com/Users").child(mAuth.getCurrentUser().getUid()).setValue(information);
+//                                private void writeNewUser(String mAuth.getUid(), String fullName, String email,String password,String phoneNumber String Gender) {
+//                                                       User information = new User(fullName, email, password, phoneNumber, Gender);
+//
+//                                                       mReference.setValue(information);
+                                                       User user=new User(fullName, email, password, phoneNumber, gender);
+                                                       mRef.child(mAuth.getCurrentUser().getUid()).setValue(user);
                                                        Toast.makeText(Register_Page.this, "User Created Successfully\n Waiting For Authentication ", Toast.LENGTH_LONG).show();
+                                                       startActivity(new Intent(Register_Page.this, MainActivity.class));
+                                                       overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                                                       finish();
+
 
                                                    } else {
                                                        Toast.makeText(Register_Page.this, "Error Occur", Toast.LENGTH_LONG).show();
@@ -119,6 +128,16 @@ public class Register_Page extends AppCompatActivity {
                         }
                     });
         }
+
+    }
+
+    private void getValues(String fullName, String email, String password, String phoneNumber, String gender) {
+        User user=new User(fullName, email, password, phoneNumber, gender);
+        user.setUsername(fullName);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setPhoneNumber(phoneNumber);
+        user.setGender(gender);
 
     }
 

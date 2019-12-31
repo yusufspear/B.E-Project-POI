@@ -13,7 +13,16 @@
           "package_name": "com.example.geo_interestpoi"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "504696178911-fnh41r61o53c48qv8ov4c7acuhc2vbsn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.geo_interestpoi",
+            "certificate_hash": "fbcd40e2922a832467349ff3c18314adab2ada03"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCxjsIAnNlZ3jKy7ravECnARHJxE3meMhY"

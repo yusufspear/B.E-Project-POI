@@ -29,7 +29,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends AppCompatActivity {
 
     private TextInputLayout mEmailLayout, mPasswordLayout;
-    private Button mBtnSignin, mBtnRegisterUser, mBtnSignoutUser ,mSignup;
+    private Button mBtnSignin, mBtnRegisterUser, mBtnSignoutUser;
     private TextView mOutputText,txtForgetPassword,txtSign_up;
     private ProgressBar mProgressBar;
     private FirebaseAuth mAuth;
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
 
         mBtnSignin.setOnClickListener(this::singInUser);
-        mBtnRegisterUser.setOnClickListener(this::createUser);
+//        mBtnRegisterUser.setOnClickListener(this::createUser);
         mBtnSignoutUser.setOnClickListener(this::signOutUser);
         txtSign_up.setOnClickListener(this::signUp);
 
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         Intent i=new Intent(this,Register_Page.class);
         startActivity(i);
         overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+        finish();
     }
 
     private void singInUser(View view) {
@@ -118,46 +119,46 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void createUser(View view) {
-
-        if (!validateEmailAddress() | !validatePassword()) {
-            // Email or Password not valid,
-            return;
-        }
-        //Email and Password valid, create user here
-
-        String email=mEmailLayout.getEditText().getText().toString().trim();
-        String password=mPasswordLayout.getEditText().getText().toString().trim();
-        showProgressBar();
-
-        mAuth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            Toast.makeText(MainActivity.this,"User Created Successfully",Toast.LENGTH_SHORT).show();
-                            hideProgressBar();
-                            startActivity(new Intent(MainActivity.this,MapsActivity.class));
-                            //updateUI();
-                        }else{
-                            Toast.makeText(MainActivity.this,"Error Occur",Toast.LENGTH_SHORT).show();
-                            hideProgressBar();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        hideProgressBar();
-                        if (e instanceof FirebaseAuthUserCollisionException){
-                            Toast.makeText(MainActivity.this,"Email Already in Database",Toast.LENGTH_SHORT).show();
-                            mOutputText.setText("Email Already in Database");
-                        }
-                    }
-                });
-
-
-    }
+//    private void createUser(View view) {
+//
+//        if (!validateEmailAddress() | !validatePassword()) {
+//            // Email or Password not valid,
+//            return;
+//        }
+//        //Email and Password valid, create user here
+//
+//        String email=mEmailLayout.getEditText().getText().toString().trim();
+//        String password=mPasswordLayout.getEditText().getText().toString().trim();
+//        showProgressBar();
+//
+//        mAuth.createUserWithEmailAndPassword(email,password)
+//                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()){
+//                            Toast.makeText(MainActivity.this,"User Created Successfully",Toast.LENGTH_SHORT).show();
+//                            hideProgressBar();
+//                            startActivity(new Intent(MainActivity.this,MapsActivity.class));
+//                            //updateUI();
+//                        }else{
+//                            Toast.makeText(MainActivity.this,"Error Occur",Toast.LENGTH_SHORT).show();
+//                            hideProgressBar();
+//                        }
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        hideProgressBar();
+//                        if (e instanceof FirebaseAuthUserCollisionException){
+//                            Toast.makeText(MainActivity.this,"Email Already in Database",Toast.LENGTH_SHORT).show();
+//                            mOutputText.setText("Email Already in Database");
+//                        }
+//                    }
+//                });
+//
+//
+//    }
 
     private void signOutUser(View view){
         mAuth.signOut();
@@ -202,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
             mPasswordLayout.setError("Password is required. Can't be empty.");
             return false;
         } else if (password.length() < 6) {
-            mPasswordLayout.setError("Password length short. Minimum 6 characters required.");
+            mPasswordLayout.setHint("Password length short. Minimum 6 characters required.");
             return true;
         } else {
             mPasswordLayout.setError(null);
