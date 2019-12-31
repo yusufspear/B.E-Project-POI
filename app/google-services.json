@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "504696178911",
+    "firebase_url": "https://geo-interest-poi.firebaseio.com",
+    "project_id": "geo-interest-poi",
+    "storage_bucket": "geo-interest-poi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504696178911:android:2a7e0549e244ef9a73416a",
+        "android_client_info": {
+          "package_name": "com.example.geo_interestpoi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxjsIAnNlZ3jKy7ravECnARHJxE3meMhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504696178911-eed7u7lj8q18ri8jaqpeqltht7m9flad.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
