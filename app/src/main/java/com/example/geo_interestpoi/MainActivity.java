@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user=mAuth.getCurrentUser();
         if (user == null){
             mOutputText.setText("User NOT Log-in");
-            return;
         }else{
             mOutputText.setText(user.getEmail());
 //            startActivity(new Intent(this, MapsActivity.class));
