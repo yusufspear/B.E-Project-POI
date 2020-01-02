@@ -36,7 +36,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.1'
     implementation 'com.google.firebase:firebase-auth:19.2.0'
     implementation 'com.google.firebase:firebase-database:19.2.0'
-
+    implementation 'com.karumi:dexter:6.0.1'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

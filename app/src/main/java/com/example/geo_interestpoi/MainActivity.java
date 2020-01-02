@@ -1,13 +1,20 @@
 package com.example.geo_interestpoi;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.textfield.TextInputLayout;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.provider.Settings;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +32,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private int i;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +73,57 @@ public class MainActivity extends AppCompatActivity {
                 updateUI();
             }
         };
+
+
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+
+                        if (isCheck()){
+
+                            Toast.makeText(MainActivity.this, "Permission Granted Successfully", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        if(response.isPermanentlyDenied()){
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setTitle("Permission Denied")
+                                    .setMessage("Permission to access device location is permanently denied. you need to go to setting to allow the permission.")
+                                    .setNegativeButton("Cancel", null)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent intent = new Intent();
+                                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                            intent.setData(Uri.fromParts("package", getPackageName(), null));
+                                        }
+                                    })
+                                    .show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+
+    }
+
+    private boolean isCheck() {
+
+        if (i == 1){
+            i=0;
+            return true;
+        }else{
+            return false;
+        }
 
     }
 
@@ -87,11 +152,16 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
-                            hideProgressBar();
-                            Toast.makeText(MainActivity.this,"User Log-in Successfully",Toast.LENGTH_SHORT).show();
-                            Intent i = new Intent(MainActivity.this, MapsActivity.class);
-                            startActivity(i);
-                            updateUI();
+                            if(mAuth.getCurrentUser().isEmailVerified()){
+                                hideProgressBar();
+                                Toast.makeText(MainActivity.this,"User Log-in Successfully",Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(MainActivity.this, POI_Set.class);
+                                startActivity(i);
+                                updateUI();
+                            }else{
+                                Toast.makeText(MainActivity.this,"Please Verify the Email Address",Toast.LENGTH_SHORT).show();
+                            }
+
                         }else{
                             hideProgressBar();
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
@@ -99,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                                 mOutputText.setText("Invalid Password");
                             }else if (task.getException() instanceof FirebaseAuthInvalidUserException) {
                                 Toast.makeText(MainActivity.this,"Email not Exit in Database",Toast.LENGTH_SHORT).show();
-                                mOutputText.setText("Email not Exit in Database");
+                                mOutputText.setText("Email NOT Exit");
                             }
                         }
                     }
@@ -110,12 +180,14 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI() {
 
         FirebaseUser user=mAuth.getCurrentUser();
-        if (user == null){
+        i=1;
+        if (user == null) {
             mOutputText.setText("User NOT Log-in");
-        }else{
-            mOutputText.setText(user.getEmail());
-//            startActivity(new Intent(this, MapsActivity.class));
         }
+//        else{
+////            mOutputText.setText(user.getEmail());
+////            startActivity(new Intent(this, MapsActivity.class));
+//        }
     }
 
 //    private void createUser(View view) {

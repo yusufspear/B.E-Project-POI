@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <string name="app_name">Geo-Interest(POI)</string>
     <string name="enter_email">Enter Email</string>
     <string name="enter_password">Enter Password</string>
@@ -19,4 +19,7 @@
     <string name="re_enter_password">Re-Enter Password</string>
     <string name="enter_phone_number">Enter Phone Number</string>
     <string name="welcome_to">Welcome To</string>
+    <string name="back">Back</string>
+    <string name="select_POI">Select POI</string>
+
 </resources>

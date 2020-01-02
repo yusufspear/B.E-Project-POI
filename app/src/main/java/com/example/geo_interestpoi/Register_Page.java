@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -20,12 +22,14 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
+
 public class Register_Page extends AppCompatActivity {
 
 
     private TextInputLayout FullName, Email, Password, Repassword, PhoneNumber;
     private RadioButton GenderM;
-    private Button Register;
+    private Button Register, Backbtn;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mRef;
@@ -40,10 +44,17 @@ public class Register_Page extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference("User");
-
         Register.setOnClickListener(this::createUser);
+        Backbtn.setOnClickListener(this::backButton);
 
 
+    }
+
+    private void backButton(View view) {
+
+        startActivity(new Intent(Register_Page.this, MainActivity.class));
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        finish();
 
     }
 
@@ -55,9 +66,9 @@ public class Register_Page extends AppCompatActivity {
         Repassword = findViewById(R.id.et_repassword);
         PhoneNumber = findViewById(R.id.et_phone);
         Register = findViewById(R.id.btn_registeruser);
-        GenderM= findViewById(R.id.rdMale);
+        GenderM = findViewById(R.id.rdMale);
+        Backbtn = findViewById(R.id.btn_back);
     }
-
 
 
     // Read from the database
@@ -65,7 +76,7 @@ public class Register_Page extends AppCompatActivity {
     private void createUser(View view) {
 
 
-        String gender ;
+        String gender;
         String fullName = FullName.getEditText().getText().toString().trim();
         String phoneNumber = PhoneNumber.getEditText().getText().toString().trim();
         String email = Email.getEditText().getText().toString().trim();
@@ -73,9 +84,9 @@ public class Register_Page extends AppCompatActivity {
         String repassword = Repassword.getEditText().getText().toString().trim();
 
 
-        if (GenderM.isChecked()){
+        if (GenderM.isChecked()) {
             gender = "Male";
-        }else {
+        } else {
             gender = "FeMale";
 
         }
@@ -99,22 +110,33 @@ public class Register_Page extends AppCompatActivity {
                                                @Override
                                                public void onComplete(@NonNull Task<AuthResult> task) {
                                                    if (task.isSuccessful()) {
-                                                       getValues(fullName, email, password, phoneNumber, gender);
+                                                       Objects.requireNonNull(mAuth.getCurrentUser()).sendEmailVerification()
+                                                               .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                   @Override
+                                                                   public void onComplete(@NonNull Task<Void> task) {
+                                                                       if (task.isSuccessful()) {
+
+                                                                           getValues(fullName, email, password, phoneNumber, gender);
 
 //                                private void writeNewUser(String mAuth.getUid(), String fullName, String email,String password,String phoneNumber String Gender) {
 //                                                       User information = new User(fullName, email, password, phoneNumber, Gender);
 //
 //                                                       mReference.setValue(information);
-                                                       User user=new User(fullName, email, password, phoneNumber, gender);
-                                                       mRef.child(mAuth.getCurrentUser().getUid()).setValue(user);
-                                                       Toast.makeText(Register_Page.this, "User Created Successfully\n Waiting For Authentication ", Toast.LENGTH_LONG).show();
-                                                       startActivity(new Intent(Register_Page.this, MainActivity.class));
-                                                       overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
-                                                       finish();
+                                                                           User user = new User(fullName, email, password, phoneNumber, gender);
+                                                                           mRef.child(mAuth.getCurrentUser().getUid()).setValue(user);
+                                                                           Toast.makeText(Register_Page.this, "User Created Successfully\n Waiting For Authentication ", Toast.LENGTH_LONG).show();
+                                                                           startActivity(new Intent(Register_Page.this, MainActivity.class));
+                                                                           overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                                                                       } else {
+
+                                                                           Toast.makeText(Register_Page.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                                                       }
+                                                                   }
+                                                               });
 
 
                                                    } else {
-                                                       Toast.makeText(Register_Page.this, "Error Occur", Toast.LENGTH_LONG).show();
+                                                       Toast.makeText(Register_Page.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                                    }
                                                }
                                            }
@@ -132,7 +154,7 @@ public class Register_Page extends AppCompatActivity {
     }
 
     private void getValues(String fullName, String email, String password, String phoneNumber, String gender) {
-        User user=new User(fullName, email, password, phoneNumber, gender);
+        User user = new User(fullName, email, password, phoneNumber, gender);
         user.setUsername(fullName);
         user.setEmail(email);
         user.setPassword(password);
@@ -148,9 +170,12 @@ public class Register_Page extends AppCompatActivity {
 
         if (email.isEmpty()) {
             Email.setError("Email is required. Can't be empty.");
+            Email.setErrorTextColor(ColorStateList.valueOf(Color.parseColor("#FF3426")));
             return false;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Email.setError("Invalid Email. Enter valid email address.");
+            Email.setErrorTextColor(ColorStateList.valueOf(Color.parseColor("#FF3426")));
+
             return false;
         } else {
             Email.setError(null);
@@ -161,13 +186,14 @@ public class Register_Page extends AppCompatActivity {
     private boolean validatePassword() {
 
         String password = Password.getEditText().getText().toString().trim();
-
         if (password.isEmpty()) {
             Password.setError("Password is required. Can't be empty.");
+            Password.setErrorTextColor(ColorStateList.valueOf(Color.parseColor("#FF3426")));
             return false;
-        } else if (password.length() < 7) {
-            Password.setError("Password is Week");
-            return true;
+        } else if (password.length() < 6) {
+            Password.setError("Password is Week Ablest 6 Digit Require");
+            Password.setErrorTextColor(ColorStateList.valueOf(Color.parseColor("#FF3426")));
+            return false;
         } else {
             Password.setError(null);
             return true;
@@ -185,6 +211,7 @@ public class Register_Page extends AppCompatActivity {
             return false;
         } else if (fullName.length() < 5) {
             FullName.setError("Name is Too Short!");
+            FullName.setErrorTextColor(ColorStateList.valueOf(Color.parseColor("#FF3426")));
             return true;
         } else {
             FullName.setError(null);
@@ -202,15 +229,13 @@ public class Register_Page extends AppCompatActivity {
             return false;
         } else if (phoneNumber.length() < 10) {
             PhoneNumber.setError("10 Digit Required!");
-            return true;
+            PhoneNumber.setErrorTextColor(ColorStateList.valueOf(Color.parseColor("#FF3426")));
+
+            return false;
         } else {
             PhoneNumber.setError(null);
             return true;
         }
-
     }
-
-
-
 
 }
