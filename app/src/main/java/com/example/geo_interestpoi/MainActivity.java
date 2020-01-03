@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!validateEmailAddress() | !validatePassword()) {
             // Email or Password not valid,
-            Toast.makeText(this,"ERROR",Toast.LENGTH_LONG).show();
+//            Toast.makeText(this,"ERROR",Toast.LENGTH_LONG).show();
             return ;
         }
         //Email and Password valid, sign in user here
@@ -273,9 +273,6 @@ public class MainActivity extends AppCompatActivity {
         if (password.isEmpty()) {
             mPasswordLayout.setError("Password is required. Can't be empty.");
             return false;
-        } else if (password.length() < 6) {
-            mPasswordLayout.setHint("Password length short. Minimum 6 characters required.");
-            return true;
         } else {
             mPasswordLayout.setError(null);
             return true;
