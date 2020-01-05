@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -32,6 +33,13 @@ public class POI_Set extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+            }
+        });
+        fab_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(POI_Set.this,Home.class));
+                finish();
             }
         });
 
