@@ -29,19 +29,13 @@ public class POI_Set extends AppCompatActivity {
         setContentView(R.layout.activity_poi__set);
 
         initViews();
-        fab_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        fab_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(POI_Set.this,Home.class));
-                finish();
-            }
-        });
+//        fab_add.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
+        fab_confirm.setOnClickListener(this::confirm);
 
         GridLayoutManager gridLayoutManager= new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(gridLayoutManager);
@@ -68,6 +62,11 @@ public class POI_Set extends AppCompatActivity {
 
         recyclerView.setAdapter(new POIAdapter(imageList, titleList));
 
+    }
+
+    private void confirm(View view) {
+
+        startActivity(new Intent(this,Home.class));
     }
 
     private void initViews() {
