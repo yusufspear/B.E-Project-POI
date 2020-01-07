@@ -20,7 +20,7 @@ public class Search extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         initViews();
 
-        bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.setSelectedItemId(R.id.search);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

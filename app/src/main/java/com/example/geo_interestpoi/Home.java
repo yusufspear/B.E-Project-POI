@@ -51,6 +51,9 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        startActivity(new Intent(Home.this, MainActivity.class));
+
+
 
 
     }

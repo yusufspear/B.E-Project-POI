@@ -20,7 +20,7 @@ public class History extends AppCompatActivity {
         setContentView(R.layout.activity_history);
         initViews();
 
-        bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.setSelectedItemId(R.id.history);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
