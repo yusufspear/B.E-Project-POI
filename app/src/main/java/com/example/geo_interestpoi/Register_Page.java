@@ -39,7 +39,6 @@ public class Register_Page extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_page);
 
-
         initViews();
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
@@ -54,7 +53,6 @@ public class Register_Page extends AppCompatActivity {
 
         startActivity(new Intent(Register_Page.this, MainActivity.class));
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        finish();
 
     }
 
@@ -77,11 +75,11 @@ public class Register_Page extends AppCompatActivity {
 
 
         String gender;
-        String fullName = FullName.getEditText().getText().toString().trim();
-        String phoneNumber = PhoneNumber.getEditText().getText().toString().trim();
-        String email = Email.getEditText().getText().toString().trim();
-        String password = Password.getEditText().getText().toString().trim();
-        String repassword = Repassword.getEditText().getText().toString().trim();
+        String fullName = Objects.requireNonNull(FullName.getEditText()).getText().toString().trim();
+        String phoneNumber = Objects.requireNonNull(PhoneNumber.getEditText()).getText().toString().trim();
+        String email = Objects.requireNonNull(Email.getEditText()).getText().toString().trim();
+        String password = Objects.requireNonNull(Password.getEditText()).getText().toString().trim();
+        String repassword = Objects.requireNonNull(Repassword.getEditText()).getText().toString().trim();
 
 
         if (GenderM.isChecked()) {
@@ -118,10 +116,6 @@ public class Register_Page extends AppCompatActivity {
 
                                                                            getValues(fullName, email, password, phoneNumber, gender);
 
-//                                private void writeNewUser(String mAuth.getUid(), String fullName, String email,String password,String phoneNumber String Gender) {
-//                                                       User information = new User(fullName, email, password, phoneNumber, Gender);
-//
-//                                                       mReference.setValue(information);
                                                                            User user = new User(fullName, email, password, phoneNumber, gender);
                                                                            mRef.child(mAuth.getCurrentUser().getUid()).setValue(user);
                                                                            Toast.makeText(Register_Page.this, "User Created Successfully\n Waiting For Authentication ", Toast.LENGTH_LONG).show();

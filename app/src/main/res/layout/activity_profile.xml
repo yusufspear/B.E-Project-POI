@@ -6,40 +6,61 @@
     android:layout_height="match_parent"
     tools:context=".Profile">
 
+    <TextView
+        android:id="@+id/txt1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ready_to_code"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_singoutuser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_singoutuser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/btnsignin"
+        android:elevation="10dp"
+        android:text="@string/sign_out"
+        android:textColor="@color/colorBlack"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="top"
-        tools:layout_editor_absoluteY="656dp" />
+        tools:layout_editor_absoluteY="731dp" />
 
-<!--    <FrameLayout-->
-<!--        android:id="@+id/fragment_profile"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_above="@id/bottom_navigation_bar"-->
-<!--        android:background="@color/Blue"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_bar"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="1.0"/>-->
-
+    <!--    <FrameLayout-->
+    <!--        android:id="@+id/fragment_profile"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:layout_above="@id/bottom_navigation_bar"-->
+    <!--        android:background="@color/Blue"-->
+    <!--        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_bar"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.0"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:layout_constraintVertical_bias="1.0"/>-->
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_bar"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:layout_margin="5dp"
-        android:layout_marginBottom="192dp"
         android:elevation="15dp"
         android:gravity="center"
         app:itemIconTint="@color/Blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_navigation_bar" />
 

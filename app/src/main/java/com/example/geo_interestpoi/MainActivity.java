@@ -39,6 +39,8 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextInputLayout mEmailLayout, mPasswordLayout;
@@ -47,29 +49,28 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private int i;
+    private int i,j;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        mAuth=FirebaseAuth.getInstance();
+//        updateUI();
         initViews();
+
         txtForgetPassword.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         txtSign_up.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
-        mAuth=FirebaseAuth.getInstance();
 
         mBtnSignin.setOnClickListener(this::singInUser);
-//        mBtnRegisterUser.setOnClickListener(this::createUser);
-        mBtnSignoutUser.setOnClickListener(this::signOutUser);
         txtSign_up.setOnClickListener(this::signUp);
 
         hideProgressBar();
-//        updateUI();
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
                 updateUI();
             }
         };
@@ -114,12 +115,24 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).check();
 
+
     }
 
     private boolean isCheck() {
 
         if (i == 1){
             i=0;
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    private boolean isCheckPOI() {
+
+        if (j == 1){
+            j=0;
             return true;
         }else{
             return false;
@@ -152,12 +165,18 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
-                            if(mAuth.getCurrentUser().isEmailVerified()){
+                            if(Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()){
                                 hideProgressBar();
-                                Toast.makeText(MainActivity.this,"User Log-in Successfully",Toast.LENGTH_SHORT).show();
-                                Intent i = new Intent(MainActivity.this, POI_Set.class);
-                                startActivity(i);
-                                updateUI();
+                                if (isCheckPOI()){
+                                    Toast.makeText(MainActivity.this,"User Log-in Successfully",Toast.LENGTH_SHORT).show();
+                                    Intent i = new Intent(MainActivity.this, POI_Set.class);
+                                    startActivity(i);
+                                }else{
+                                    updateUI();
+//
+//
+                                }
+
                             }else{
                                 Toast.makeText(MainActivity.this,"Please Verify the Email Address",Toast.LENGTH_SHORT).show();
                             }
@@ -178,16 +197,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-
         FirebaseUser user=mAuth.getCurrentUser();
-        i=1;
-        if (user == null) {
-            mOutputText.setText("User NOT Log-in");
+
+        if (user != null && mAuth.getCurrentUser().isEmailVerified()) {
+            startActivity(new Intent(this, Home.class));
         }
-//        else{
-////            mOutputText.setText(user.getEmail());
-////            startActivity(new Intent(this, MapsActivity.class));
-//        }
+        else{
+            mOutputText.setText("User NOT Log-in");
+
+        }
     }
 
 //    private void createUser(View view) {
@@ -230,21 +248,21 @@ public class MainActivity extends AppCompatActivity {
 //
 //
 //    }
-
-    private void signOutUser(View view){
-        mAuth.signOut();
-        //updateUI();
-
-    }
+//
+//    private void signOutUser(View view){
+//        mAuth.signOut();
+//        //updateUI();
+//
+//    }
 
     private void initViews() {
         mEmailLayout = findViewById(R.id.et_email);
         mPasswordLayout = findViewById(R.id.et_password);
         mBtnSignin = findViewById(R.id.btn_singin);
-        mBtnRegisterUser = findViewById(R.id.btn_registeruser);
+//        mBtnRegisterUser = findViewById(R.id.btn_registeruser);
         mOutputText = findViewById(R.id.tv_output);
         mProgressBar = findViewById(R.id.progressbar);
-        mBtnSignoutUser = findViewById(R.id.btn_singoutuser);
+//        mBtnSignoutUser = findViewById(R.id.btn_singoutuser);
         txtSign_up = findViewById(R.id.txtsign_up);
         txtForgetPassword = findViewById(R.id.txtforget);
 

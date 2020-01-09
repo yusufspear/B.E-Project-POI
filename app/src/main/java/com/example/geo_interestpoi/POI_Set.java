@@ -75,5 +75,7 @@ public class POI_Set extends AppCompatActivity {
         fab_add = findViewById(R.id.fab_add);
         fab_confirm = findViewById(R.id.fab_confirm);
 
+
+
     }
 }

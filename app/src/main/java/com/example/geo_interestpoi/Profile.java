@@ -6,13 +6,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class Profile extends AppCompatActivity {
+
+    Button signout;
+    private TextView mOutputText;
     BottomNavigationView bottomNavigationView;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 //    FrameLayout FragmentHome;
 
     @Override
@@ -20,6 +29,11 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         initViews();
+        mAuth=FirebaseAuth.getInstance();
+        FirebaseUser user=mAuth.getCurrentUser();
+        mOutputText.setText( user.getEmail());
+
+        signout.setOnClickListener(this::signOutUser);
 
         bottomNavigationView.setSelectedItemId(R.id.profile);
 
@@ -50,13 +64,23 @@ public class Profile extends AppCompatActivity {
             }
         });
 
-
-
     }
+
+
+
+        private void signOutUser(View view){
+            mAuth.signOut();
+            startActivity(new Intent(this,MainActivity.class));
+            //updateUI();
+
+        }
 
     private void initViews() {
 
         bottomNavigationView=findViewById(R.id.bottom_navigation_bar);
+        signout=findViewById(R.id.btn_singoutuser);
+        mOutputText=findViewById(R.id.txt1);
+
 //        FragmentHome = findViewById(R.id.fragment_home);
 
     }
