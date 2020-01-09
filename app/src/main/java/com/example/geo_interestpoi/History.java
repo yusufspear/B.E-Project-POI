@@ -6,13 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class History extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
-    TextView display;
+//    TextView display;
+//    FrameLayout FragmentHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,8 @@ public class History extends AppCompatActivity {
     private void initViews() {
 
         bottomNavigationView=findViewById(R.id.bottom_navigation_bar);
-        display = findViewById(R.id.basic);
+//        FragmentHome = findViewById(R.id.fragment_home);
+
 
     }
 
