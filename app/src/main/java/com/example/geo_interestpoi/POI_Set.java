@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +21,8 @@ public class POI_Set extends AppCompatActivity {
 
     RecyclerView recyclerView;
     FloatingActionButton fab_add, fab_confirm;
-
+    FirebaseAuth mAuth;
+    DatabaseReference mRef;
     List<Integer> imageList= new ArrayList<>();
     List<String> titleList= new ArrayList<>();
 
@@ -29,6 +33,8 @@ public class POI_Set extends AppCompatActivity {
         setContentView(R.layout.activity_poi__set);
 
         initViews();
+        mAuth=FirebaseAuth.getInstance();
+        mRef = FirebaseDatabase.getInstance().getReference("User");
 //        fab_add.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -66,7 +72,10 @@ public class POI_Set extends AppCompatActivity {
 
     private void confirm(View view) {
 
+        String isNew="false";
+        mRef.child(mAuth.getCurrentUser().getUid()).child("isnew").setValue(isNew);
         startActivity(new Intent(this,Home.class));
+        finish();
     }
 
     private void initViews() {

@@ -23,7 +23,7 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/BtnBlueLeft"
@@ -31,7 +31,7 @@
         android:elevation="15dp"
         android:padding="10dp"
         android:gravity="center"
-        android:text="@string/sing_in"
+        android:text="@string/sign_in"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

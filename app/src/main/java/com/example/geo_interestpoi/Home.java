@@ -32,6 +32,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     GoogleMap mMap;
     FloatingActionButton MyLocation;
     FrameLayout frameLayout;
+    TextView title;
     BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +83,6 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
 
 
-
     }
 
     private void CurrentLocation(View view) {
@@ -112,6 +112,7 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     private void initViews() {
 
         bottomNavigationView=findViewById(R.id.bottom_navigation_bar);
+        title =findViewById(R.id.title);
         frameLayout = findViewById(R.id.map_fragment);
         MyLocation = findViewById(R.id.fab_myLocation);
 

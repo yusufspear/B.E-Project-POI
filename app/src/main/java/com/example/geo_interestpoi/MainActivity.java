@@ -14,7 +14,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.provider.SearchRecentSuggestions;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +34,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.Tag;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -39,6 +47,10 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mOutputText,txtForgetPassword,txtSign_up;
     private ProgressBar mProgressBar;
     private FirebaseAuth mAuth;
+    private DatabaseReference mRef;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private int i,j;
 
@@ -56,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth=FirebaseAuth.getInstance();
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        mRef = mDatabase.getReference("User");
 //        updateUI();
         initViews();
 
@@ -66,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         txtSign_up.setOnClickListener(this::signUp);
 
         hideProgressBar();
-
+//
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -129,17 +144,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private boolean isCheckPOI() {
-
-        if (j == 1){
-            j=0;
-            return true;
-        }else{
-            return false;
-        }
-
-    }
-
     private void signUp(View view) {
 
         Intent i=new Intent(this,Register_Page.class);
@@ -159,25 +163,48 @@ public class MainActivity extends AppCompatActivity {
 
         String email=mEmailLayout.getEditText().getText().toString().trim();
         String password=mPasswordLayout.getEditText().getText().toString().trim();
-
+//        String[] ans = new String[2];
+//        ans[0]= "1";
         mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
-                            if(Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()){
-                                hideProgressBar();
-                                if (isCheckPOI()){
-                                    Toast.makeText(MainActivity.this,"User Log-in Successfully",Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(MainActivity.this, POI_Set.class);
-                                    startActivity(i);
-                                }else{
-                                    updateUI();
-//
-//
-                                }
 
-                            }else{
+                            if(Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()){
+
+                                mRef.child(mAuth.getCurrentUser().getUid()).child("isnew").addValueEventListener(new ValueEventListener() {
+
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        Log.i("Permission","On Data Change Field Execute");
+                                        String isNew;
+                                        isNew = dataSnapshot.getValue(String.class);
+
+                                        if (isNew.equals("true")){
+                                            Intent i = new Intent(MainActivity.this, POI_Set.class);
+                                            Toast.makeText(MainActivity.this,"User Log-in Successfully Please Select POI",Toast.LENGTH_LONG).show();
+                                            startActivity(i);
+
+                                        }else{
+//                                            updateUI();
+//                                            startActivity(new Intent(MainActivity.this, Home.class));
+                                            Toast.makeText(MainActivity.this,"User Log-in Successfully",Toast.LENGTH_LONG).show();
+
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        Log.e("Error", databaseError.getMessage());
+                                    }
+                                });
+                            }
+
+                            else{
                                 Toast.makeText(MainActivity.this,"Please Verify the Email Address",Toast.LENGTH_SHORT).show();
                             }
 
@@ -191,7 +218,11 @@ public class MainActivity extends AppCompatActivity {
                                 mOutputText.setText("Email NOT Exit");
                             }
                         }
-                    }
+
+
+                }
+
+
                 });
 
     }
@@ -200,7 +231,9 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user=mAuth.getCurrentUser();
 
         if (user != null && mAuth.getCurrentUser().isEmailVerified()) {
+
             startActivity(new Intent(this, Home.class));
+            finish();
         }
         else{
             mOutputText.setText("User NOT Log-in");

@@ -7,18 +7,28 @@ public class User {
     private String password;
     private String  phoneNumber;
     private String gender;
-
-//    public User() {
-//        // Default constructor required for calls to DataSnapshot.getValue(User.class)
-//    }
-
-    public User(String username, String email, String password, String  phoneNumber, String gender) {
+    private String  isNew;
+    public User(String username, String email, String password, String phoneNumber, String gender, String  isNew) {
 
         this.username = username;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.gender = gender;
+        this.isNew = isNew;
+    }
+    public User() {
+        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+    }
+
+
+
+    public String  getisnew() {
+        return isNew;
+    }
+
+    public void setisnew(String isNew) {
+        this.isNew = isNew;
     }
 
     public String getUsername() {

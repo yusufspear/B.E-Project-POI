@@ -3,7 +3,7 @@
     <string name="enter_email">Enter Email</string>
     <string name="enter_password">Enter Password</string>
     <string name="ready_to_code">Ready to Code!</string>
-    <string name="sing_in">Sing in</string>
+    <string name="sign_in">Sign in</string>
     <string name="register">Register</string>
     <string name="sign_out">Sign Out</string>
     <string name="title_activity_maps">Map</string>

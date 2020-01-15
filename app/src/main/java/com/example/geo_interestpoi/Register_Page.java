@@ -80,7 +80,7 @@ public class Register_Page extends AppCompatActivity {
         String email = Objects.requireNonNull(Email.getEditText()).getText().toString().trim();
         String password = Objects.requireNonNull(Password.getEditText()).getText().toString().trim();
         String repassword = Objects.requireNonNull(Repassword.getEditText()).getText().toString().trim();
-
+        String isNew="true";
 
         if (GenderM.isChecked()) {
             gender = "Male";
@@ -114,9 +114,9 @@ public class Register_Page extends AppCompatActivity {
                                                                    public void onComplete(@NonNull Task<Void> task) {
                                                                        if (task.isSuccessful()) {
 
-                                                                           getValues(fullName, email, password, phoneNumber, gender);
+                                                                           getValues(fullName, email, password, phoneNumber, gender,isNew);
 
-                                                                           User user = new User(fullName, email, password, phoneNumber, gender);
+                                                                           User user = new User(fullName, email, password, phoneNumber, gender,isNew);
                                                                            mRef.child(mAuth.getCurrentUser().getUid()).setValue(user);
                                                                            Toast.makeText(Register_Page.this, "User Created Successfully\n Waiting For Authentication ", Toast.LENGTH_LONG).show();
                                                                            startActivity(new Intent(Register_Page.this, MainActivity.class));
@@ -147,13 +147,14 @@ public class Register_Page extends AppCompatActivity {
 
     }
 
-    private void getValues(String fullName, String email, String password, String phoneNumber, String gender) {
-        User user = new User(fullName, email, password, phoneNumber, gender);
+    private void getValues(String fullName, String email, String password, String phoneNumber, String gender, String isNew) {
+        User user = new User(fullName, email, password, phoneNumber, gender, isNew);
         user.setUsername(fullName);
         user.setEmail(email);
         user.setPassword(password);
         user.setPhoneNumber(phoneNumber);
         user.setGender(gender);
+        user.setisnew(isNew);
 
     }
 
