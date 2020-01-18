@@ -21,6 +21,5 @@
     <string name="welcome_to">Welcome To</string>
     <string name="back">Back</string>
     <string name="select_POI">Select POI</string>
-    <string name="poi_1">POI 1</string>
-
+    <string name="reset_password">RESET Password</string>
 </resources>

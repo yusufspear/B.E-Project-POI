@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         mBtnSignin.setOnClickListener(this::singInUser);
         txtSign_up.setOnClickListener(this::signUp);
-
+        txtForgetPassword.setOnClickListener(this::forgetPassword);
         hideProgressBar();
 //
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -131,6 +131,11 @@ public class MainActivity extends AppCompatActivity {
                 }).check();
 
 
+    }
+
+    private void forgetPassword(View view) {
+        startActivity(new Intent(this,ForgetPassword.class));
+        finish();
     }
 
     private boolean isCheck() {

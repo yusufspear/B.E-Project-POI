@@ -15,11 +15,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Profile"
+        <activity android:name=".ForgetPassword"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".Profile"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".History"
+        <activity
+            android:name=".History"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Search"
+        <activity
+            android:name=".Search"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Home"
