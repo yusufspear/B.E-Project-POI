@@ -34,7 +34,7 @@ public class ForgetPassword extends AppCompatActivity {
         setContentView(R.layout.activity_forget_password);
         mAuth=FirebaseAuth.getInstance();
         initViews();
-        toolbar.setNavigationIcon(R.drawable.icons8_forgot_password_90);
+        toolbar.setNavigationIcon(R.drawable.icons8_forgot_password_100);
         Reset.setOnClickListener(this::forgetPassword);
     }
 
