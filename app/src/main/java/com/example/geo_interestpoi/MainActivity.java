@@ -82,13 +82,7 @@ public class MainActivity extends AppCompatActivity {
         txtForgetPassword.setOnClickListener(this::forgetPassword);
         hideProgressBar();
 //
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
-                updateUI();
-            }
-        };
 
 
         Dexter.withActivity(this)
@@ -129,6 +123,13 @@ public class MainActivity extends AppCompatActivity {
                         token.continuePermissionRequest();
                     }
                 }).check();
+
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                    updateUI();
+            }
+        };
 
 
     }
@@ -188,13 +189,13 @@ public class MainActivity extends AppCompatActivity {
                                         isNew = dataSnapshot.getValue(String.class);
 
                                         if (isNew.equals("true")){
-                                            Intent i = new Intent(MainActivity.this, POI_Set.class);
+                                            startActivity(new Intent(MainActivity.this, POI_Set.class));
                                             Toast.makeText(MainActivity.this,"User Log-in Successfully Please Select POI",Toast.LENGTH_LONG).show();
-                                            startActivity(i);
+                                            finish();
 
                                         }else{
 //                                            updateUI();
-//                                            startActivity(new Intent(MainActivity.this, Home.class));
+                                            startActivity(new Intent(MainActivity.this, Home.class));
                                             Toast.makeText(MainActivity.this,"User Log-in Successfully",Toast.LENGTH_LONG).show();
 
 
@@ -234,16 +235,30 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUI() {
         FirebaseUser user=mAuth.getCurrentUser();
+        showProgressBar();
+        if (user !=null && mAuth.getCurrentUser().isEmailVerified()){
 
-        if (user != null && mAuth.getCurrentUser().isEmailVerified()) {
+            mRef.child((mAuth.getCurrentUser()).getUid()).child("isnew").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String isNew = dataSnapshot.getValue(String.class);
+                    if (isNew.equals("false")) {
+                        hideProgressBar();
+                        startActivity(new Intent(MainActivity.this, Home.class));
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            startActivity(new Intent(this, Home.class));
-            finish();
+                }
+            });
         }
         else{
             mOutputText.setText("User NOT Log-in");
 
         }
+
+
     }
 
 //    private void createUser(View view) {

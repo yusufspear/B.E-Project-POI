@@ -23,6 +23,7 @@ public class POI_Set extends AppCompatActivity {
     FloatingActionButton fab_add, fab_confirm;
     FirebaseAuth mAuth;
     DatabaseReference mRef;
+//    POIAdapter mAdapter;
     List<Integer> imageList= new ArrayList<>();
     List<String> titleList= new ArrayList<>();
 
@@ -83,6 +84,12 @@ public class POI_Set extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         fab_add = findViewById(R.id.fab_add);
         fab_confirm = findViewById(R.id.fab_confirm);
+
+//        mAdapter.setOnItemClickListener(new POIAdapter.onItemClickListener() {
+//            @Override
+//            public void onItemClick(int position) {
+//            }
+//        });
 
 
 

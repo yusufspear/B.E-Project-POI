@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -17,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
@@ -64,9 +66,11 @@ public class ForgetPassword extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()){
                         Toast.makeText(ForgetPassword.this,"Please Check Your Email.",Toast.LENGTH_LONG).show();
-                    }
-                    else {
-                        Toast.makeText(ForgetPassword.this, Objects.requireNonNull(task.getException()).getMessage(),Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(ForgetPassword.this, MainActivity.class));
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+
+                    }else if (task.getException() instanceof FirebaseAuthInvalidUserException) {
+                        Toast.makeText(ForgetPassword.this,"Email not Exit in Database",Toast.LENGTH_SHORT).show();
                     }
                 }
             });
