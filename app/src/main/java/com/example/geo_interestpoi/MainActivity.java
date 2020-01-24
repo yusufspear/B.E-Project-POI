@@ -234,29 +234,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        FirebaseUser user=mAuth.getCurrentUser();
+        FirebaseUser user = mAuth.getCurrentUser();
         showProgressBar();
-        if (user !=null && mAuth.getCurrentUser().isEmailVerified()){
+        if (user != null && mAuth.getCurrentUser().isEmailVerified()) {
+            startActivity(new Intent(this,Home.class));
 
-            mRef.child((mAuth.getCurrentUser()).getUid()).child("isnew").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String isNew = dataSnapshot.getValue(String.class);
-                    if (isNew.equals("false")) {
-                        hideProgressBar();
-                        startActivity(new Intent(MainActivity.this, Home.class));
-                    }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
         }
+
+
         else{
-            mOutputText.setText("User NOT Log-in");
+                mOutputText.setText("User NOT Log-in");
 
-        }
+            }
 
 
     }

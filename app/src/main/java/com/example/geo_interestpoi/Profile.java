@@ -5,15 +5,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Profile extends AppCompatActivity {
 
@@ -22,7 +25,6 @@ public class Profile extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-//    FrameLayout FragmentHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +32,42 @@ public class Profile extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         initViews();
         mAuth=FirebaseAuth.getInstance();
-        FirebaseUser user=mAuth.getCurrentUser();
-        mOutputText.setText( user.getEmail());
+//        FirebaseUser user=mAuth.getCurrentUser();
+        String[] New = new String[6];
+        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("User");
+
+        mRef.child(mAuth.getCurrentUser().getUid())
+                .addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                User user = dataSnapshot.getValue(User.class);
+                New[0] = dataSnapshot.child("isnew").getValue(String.class);
+                New[1] = dataSnapshot.child("email").getValue(String.class);
+
+                Log.i("List", "onDataChange: Execute");
+                mOutputText.setText(user.getGender() + " HI");
+                Log.i("List", "onDataChange: Execute1");
+
+                mOutputText.setText(New[0] + " HI\n" + New[1]);
+//
+//                if (New[0].equals("false")){
+//                    Log.i("if Ex", "onCreate: if Exiciye");
+//                    mOutputText.setText(New[0] + " HI");
+//
+//                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
 
         signout.setOnClickListener(this::signOutUser);
 
@@ -67,8 +103,7 @@ public class Profile extends AppCompatActivity {
     }
 
 
-
-        private void signOutUser(View view){
+    private void signOutUser(View view){
             mAuth.signOut();
             startActivity(new Intent(this,MainActivity.class));
             //updateUI();
