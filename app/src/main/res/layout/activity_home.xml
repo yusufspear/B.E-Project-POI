@@ -31,7 +31,9 @@
         android:ems="12"
         android:paddingStart="20dp"
         android:hint="Enter the Address"
-        android:background="@drawable/textfeild" android:inputType="textPersonName"
+        android:background="@drawable/textfeild"
+        android:inputType="textAutoComplete"
+        android:textColor="@color/pureGray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

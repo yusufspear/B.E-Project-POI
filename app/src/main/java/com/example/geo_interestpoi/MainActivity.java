@@ -3,7 +3,13 @@ package com.example.geo_interestpoi;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -16,6 +22,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.provider.SearchRecentSuggestions;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -52,6 +60,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static android.content.res.ColorStateList.valueOf;
+import static android.graphics.Color.parseColor;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -130,6 +141,32 @@ public class MainActivity extends AppCompatActivity {
                     updateUI();
             }
         };
+
+        Objects.requireNonNull(mEmailLayout.getEditText()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                String email=editable.toString();
+                if (email.equals("")){
+                    mEmailLayout.setError("Cant Empty");
+                }else if(!Patterns.EMAIL_ADDRESS.matcher(editable).matches()){
+                    mEmailLayout.setError("Pattern NOT Match!");
+                }else {
+                    mEmailLayout.setError(null);
+                }
+
+            }
+        });
 
 
     }
@@ -313,6 +350,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean validateEmailAddress() {
 
         String email = mEmailLayout.getEditText().getText().toString().trim();
+        mEmailLayout.getEditText().getBackground().clearColorFilter();
+        ;
 
         if (email.isEmpty()) {
             mEmailLayout.setError("Email is required. Can't be empty.");
