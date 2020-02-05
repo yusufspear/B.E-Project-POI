@@ -73,7 +73,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:background="@drawable/textfeild"
+            android:background="@drawable/textfield"
             android:drawablePadding="10dp"
             android:hint="@string/enter_full_name"
             android:inputType="textPersonName"
@@ -101,7 +101,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:background="@drawable/textfeild"
+            android:background="@drawable/textfield"
             android:drawablePadding="10dp"
             android:hint="@string/enter_email"
             android:inputType="textEmailAddress"
@@ -130,7 +130,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:background="@drawable/textfeild"
+            android:background="@drawable/textfield"
             android:drawablePadding="10dp"
             android:hint="@string/enter_password"
             android:inputType="textPassword"
@@ -158,7 +158,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:background="@drawable/textfeild"
+            android:background="@drawable/textfield"
             android:drawablePadding="10dp"
             android:hint="@string/re_enter_password"
             android:inputType="textPassword"
@@ -186,7 +186,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:background="@drawable/textfeild"
+            android:background="@drawable/textfield"
             android:drawablePadding="10dp"
             android:hint="@string/enter_phone_number"
             android:inputType="phone"

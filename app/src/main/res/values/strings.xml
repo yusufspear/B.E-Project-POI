@@ -22,4 +22,5 @@
     <string name="back">Back</string>
     <string name="select_POI">Select POI</string>
     <string name="reset_password">RESET Password</string>
+    <string name="enter_the_address">Enter the Address</string>
 </resources>

@@ -40,6 +40,17 @@ public class ForgetPassword extends AppCompatActivity {
         Reset.setOnClickListener(this::forgetPassword);
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     @Override
     protected void onRestart() {
         super.onRestart();

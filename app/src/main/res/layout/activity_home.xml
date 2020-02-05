@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Home">
+
+    <SearchView
+        android:id="@+id/search_View"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/searchfield"
+        android:elevation="5dp"
+        android:queryHint="Search..."
+        android:iconifiedByDefault="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <FrameLayout
         android:id="@+id/map_fragment"
@@ -22,38 +37,12 @@
 
     </FrameLayout>
 
-    <EditText
-        android:id="@+id/input"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:ems="12"
-        android:paddingStart="20dp"
-        android:hint="Enter the Address"
-        android:background="@drawable/textfeild"
-        android:inputType="textAutoComplete"
-        android:textColor="@color/pureGray"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/imgbtn_search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/input"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/input"
-        app:layout_constraintTop_toTopOf="@+id/input"
-        map:srcCompat="@drawable/ic_search_white_24dp" />
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_myLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="50dp"
         android:backgroundTint="@color/colorWhite"
         android:clickable="true"
         android:focusable="true"
@@ -63,23 +52,46 @@
         app:elevation="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/map_fragment"
         app:layout_constraintEnd_toEndOf="@+id/map_fragment"
+        app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="@+id/map_fragment"
         tools:ignore="UnusedAttribute,VectorDrawableCompat"
         tools:targetApi="m" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_direction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/colorWhite"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="@drawable/ic_directions_black_24dp"
+        android:foregroundGravity="center"
+        app:backgroundTint="@color/Blue"
+        app:borderWidth="1dp"
+        app:elevation="8dp"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="@+id/map_fragment"
+        app:layout_constraintEnd_toEndOf="@+id/map_fragment"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="@+id/map_fragment"
+        app:rippleColor="@color/Yello"
+        tools:ignore="UnusedAttribute,VectorDrawableCompat"
+        tools:targetApi="m" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
-    android:id="@+id/bottom_navigation_bar"
-    android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:elevation="15dp"
-    android:gravity="center"
-    android:layout_margin="5dp"
-    app:itemIconTint="@color/Blue"
-    app:menu="@menu/bottom_navigation_bar"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.444"
-    app:layout_constraintStart_toStartOf="parent" >
+        android:id="@+id/bottom_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_margin="5dp"
+        android:elevation="15dp"
+        android:gravity="center"
+        app:itemIconTint="@color/Blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_bar">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 

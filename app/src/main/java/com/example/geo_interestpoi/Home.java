@@ -14,14 +14,17 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.media.audiofx.Equalizer;
 import android.os.Bundle;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,13 +58,13 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     private static final double Long= 72.883056;
     private static final int GPS_REQUEST_CODE =9001;
     GoogleMap mMap;
-    FloatingActionButton mCurrentLocation;
+    FloatingActionButton mCurrentLocation, mDirection;
     FrameLayout frameLayout;
-    EditText mAddress;
-    ImageButton mSearch;
+    SearchView searchView;
     BottomNavigationView bottomNavigationView;
     private FusedLocationProviderClient mLocationClient;
     private LocationCallback mLocationCallback;
+    HandlerThread handlerThread;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,46 +79,79 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
                 .add(R.id.map_fragment,supportMapFragment)
                 .commit();
 
-        supportMapFragment.getMapAsync(this);
+        supportMapFragment.getMapAsync(this::onMapReady);
         initViews();
-        mSearch.setOnClickListener(this::goLocation);
         mCurrentLocation.setOnClickListener(this::CurrentLocation);
 
         mLocationClient= new FusedLocationProviderClient(this);
-
         mLocationCallback = new  LocationCallback(){
 
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                Log.v("locF", "onLocationResult: Execute");
 
                 if (locationResult == null){
-                    Log.i("locNR", "onLocationResult: Execute");
+                    Log.i("loc", "onLocationResult: Execute");
                     return;
                 }
-                Log.i("locR", "onLocationResult: Execute");
-                Location address= locationResult.getLastLocation();
-//                    LocationUpdate();
-                Toast.makeText(Home.this,"Lat:- " +address.getLatitude()+"\n Long:- "+address.getLongitude(),Toast.LENGTH_LONG).show();
 
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(3.0f));
-                LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
-                CameraUpdate cameraUpdate=CameraUpdateFactory.newLatLngZoom(latLng,19);
+                runOnUiThread(() -> {
+                    Log.i("loc", "onLocationResult: Execute");
+                    Location address= locationResult.getLastLocation();
+                    Toast.makeText(Home.this,"Lat:- " +address.getLatitude()+"\n Long:- "+address.getLongitude(),Toast.LENGTH_LONG).show();
 
-                mMap.animateCamera(cameraUpdate, 1000, new GoogleMap.CancelableCallback() {
-                    @Override
-                    public void onFinish() {
-//                        Toast.makeText(Home.this, "Finished", Toast.LENGTH_SHORT).show();
-                    }
+                    LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                    showMarker(latLng);
 
-                    @Override
-                    public void onCancel() {
-//                        Toast.makeText(Home.this, "Cancelled", Toast.LENGTH_SHORT).show();
 
-                    }
+
                 });
+
             }
         };
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                String address= searchView.getQuery().toString().trim();
+                if (address!=null ){
+                    Geocoder geocoder = new Geocoder(Home.this, Locale.ENGLISH);
+                    try {
+                        List<Address>  addressList=geocoder.getFromLocationName(address,10);
+
+                        if (addressList.size()>0){
+
+                            Address location=addressList.get(0);
+                            LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+//                            showMarker(latLng);
+                            mMap.addMarker(new MarkerOptions().title(s).position(latLng));
+                            CameraUpdate cameraUpdate= CameraUpdateFactory.newLatLngZoom(latLng,19);
+                            mMap.animateCamera(cameraUpdate, 1000, new GoogleMap.CancelableCallback() {
+                                @Override
+                                public void onFinish() {
+//                        Toast.makeText(Home.this, "Finished", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onCancel() {
+//                        Toast.makeText(Home.this, "Cancelled", Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
 
         bottomNavigationView.setSelectedItemId(R.id.home);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -146,132 +182,53 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
         });
 
 
+
     }
 
-    private void goLocation(View view) {
 
-        String input =mAddress.getText().toString();
-        Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
-        try {
-            List<Address>  addressList=geocoder.getFromLocationName(input,10);
-
-            if (addressList.size()>0){
-
-                Address address=addressList.get(0);
-                location(address.getLatitude(),address.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(new LatLng(address.getLatitude(),address.getLongitude())));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void CurrentLocation(View view) {
 
 
-        LocationUpdate();
+        if (isGPSEnabled()){
 
+            mLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    if (task.isSuccessful()){
+                        LocationUpdate();
+                        Location address = task.getResult();
+                        mMap.animateCamera(CameraUpdateFactory.zoomTo(3.0f));
+                        LatLng latLng=new LatLng(address.getLatitude(),address.getLongitude());
+                        showMarker(latLng);
 
+                        CameraUpdate cameraUpdate= CameraUpdateFactory.newLatLngZoom(latLng,19);
+                        mMap.animateCamera(cameraUpdate, 1000, new GoogleMap.CancelableCallback() {
+                            @Override
+                            public void onFinish() {
+//                        Toast.makeText(Home.this, "Finished", Toast.LENGTH_SHORT).show();
+                            }
 
-//
-//        if (isGPSEnabled()){
-//
-//            mLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-//                @Override
-//                public void onComplete(@NonNull Task<Location> task) {
-//                    if (task.isSuccessful()){
-//                        Location address = task.getResult();
-//                        location(address.getLatitude(),address.getLongitude());
-//
-//                    }else {
-//                        Log.i("Task ", "onComplete: Not Execute");
-//                    }
-//                }
-//            });
-//
-//        }
+                            @Override
+                            public void onCancel() {
+//                        Toast.makeText(Home.this, "Cancelled", Toast.LENGTH_SHORT).show();
 
+                            }
+                        });
 
+                    }else {
+                        Log.i("Task ", "onComplete: Not Execute");
+                    }
+                }
+            });
 
+        }
 
-//        if (mMap!=null){
-//
-//            mLocationCallback = new  LocationCallback(){
-//
-//                @Override
-//                public void onLocationResult(LocationResult locationResult) {
-//                    Log.i("locF", "onLocationResult: Execute");
-//
-//                    if (locationResult == null){
-//                        Log.i("locNR", "onLocationResult: Execute");
-//                        return;
-//                    }
-//                    Log.i("locR", "onLocationResult: Execute");
-//                    Location location= locationResult.getLastLocation();
-////                    LocationUpdate();
-//                    Toast.makeText(Home.this,"Lat:- " +location.getLatitude()+"\n Long:- "+location.getLongitude(),Toast.LENGTH_LONG).show();
-//
-//                    mMap.animateCamera(CameraUpdateFactory.zoomTo(3.0f));
-//                    LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-//                    CameraUpdate cameraUpdate=CameraUpdateFactory.newLatLngZoom(latLng,19);
-//
-//                    mMap.animateCamera(cameraUpdate, 1000, new GoogleMap.CancelableCallback() {
-//                        @Override
-//                        public void onFinish() {
-//                            Toast.makeText(Home.this, "Finished", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                        @Override
-//                        public void onCancel() {
-//                            Toast.makeText(Home.this, "Cancelled", Toast.LENGTH_SHORT).show();
-//
-//                        }
-//                    });
-//                }
-//            };
-//
-////            mLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-////                @Override
-////                public void onComplete(@NonNull Task<Location> task) {
-////
-////                    if (task.isSuccessful()){
-////                        Location address=task.getResult();
-////                        location(address.getLatitude(),address.getLongitude());
-//////                        mMap.addMarker(new MarkerOptions().position(new LatLng(address.getLatitude(),address.getLongitude())));
-////
-////                        mMap.animateCamera(CameraUpdateFactory.zoomTo(3.0f));
-////                        LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
-////                        CameraUpdate cameraUpdate=CameraUpdateFactory.newLatLngZoom(latLng,19);
-////
-////                        mMap.animateCamera(cameraUpdate, 1000, new GoogleMap.CancelableCallback() {
-////                            @Override
-////                            public void onFinish() {
-////                                Toast.makeText(Home.this, "Finished", Toast.LENGTH_SHORT).show();
-////                            }
-////
-////                            @Override
-////                            public void onCancel() {
-////                                Toast.makeText(Home.this, "Cancelled", Toast.LENGTH_SHORT).show();
-////
-////                            }
-////                        });
-////
-////                    }
-////                    else {
-////
-////                        Toast.makeText(Home.this, task.getException().getMessage(),Toast.LENGTH_LONG).show();
-////                    }
-////
-////                }
-////            });
-//
-//
-//        }
     }
     private  boolean isGPSEnabled(){
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        boolean providerEnable  = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean providerEnable  = Objects.requireNonNull(locationManager).isProviderEnabled(LocationManager.GPS_PROVIDER);
         if (providerEnable){
             return true;
         }else {
@@ -285,9 +242,9 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
                         startActivityForResult(intent,GPS_REQUEST_CODE);
                     })
                     .show();
+            return false;
         }
 
-        return false;
     }
 
     @Override
@@ -296,9 +253,11 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
         if (requestCode== GPS_REQUEST_CODE){
 
             LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            boolean providerEnable  = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean providerEnable  = Objects.requireNonNull(locationManager).isProviderEnabled(LocationManager.GPS_PROVIDER);
             if (providerEnable) {
                 Toast.makeText(this, "GPS Enabled", Toast.LENGTH_LONG).show();
+                CameraUpdate cameraUpdate= CameraUpdateFactory.zoomTo(3);
+
             }else{
                 Toast.makeText(this,"GPS NOT Enabled",Toast.LENGTH_LONG).show();
 
@@ -309,10 +268,10 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     private void initViews() {
 
         bottomNavigationView=findViewById(R.id.bottom_navigation_bar);
-        mAddress =findViewById(R.id.input);
-        mSearch =findViewById(R.id.imgbtn_search);
         frameLayout = findViewById(R.id.map_fragment);
         mCurrentLocation = findViewById(R.id.fab_myLocation);
+        mDirection = findViewById(R.id.fab_direction);
+        searchView = findViewById(R.id.search_View);
 
 
     }
@@ -323,8 +282,11 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
         Log.d("Map", "IT is Ready");
         mMap =googleMap;
-        location(Lang,Long);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.setBuildingsEnabled(true);
+        LatLng latLng=new LatLng(23.114342, 79.170558);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,6));
+
 //        mMap.setMyLocationEnabled(true);
 
     }
@@ -332,8 +294,11 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
     private void LocationUpdate(){
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(2000);
+        locationRequest.setInterval(3500);
+        locationRequest.setFastestInterval(1500);
+
+        handlerThread = new HandlerThread("LocationCallbackHandler");
+        handlerThread.start();
 
         mLocationClient.requestLocationUpdates(locationRequest,mLocationCallback, Looper.getMainLooper());
     }
@@ -342,20 +307,6 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
 
         LatLng latLng=new LatLng(Lang,Long);
         showMarker(latLng);
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(3.0f));
-        CameraUpdate cameraUpdate= CameraUpdateFactory.newLatLngZoom(latLng,19);
-                mMap.animateCamera(cameraUpdate, 1000, new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
-                Toast.makeText(Home.this, "Finished", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancel() {
-                Toast.makeText(Home.this, "Cancelled", Toast.LENGTH_SHORT).show();
-
-            }
-        });
 
     }
 
@@ -363,5 +314,33 @@ public class Home extends AppCompatActivity implements OnMapReadyCallback {
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         mMap.addMarker(markerOptions);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (handlerThread!=null){
+            handlerThread.quitSafely();
+        }
     }
 }

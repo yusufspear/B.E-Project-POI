@@ -24,7 +24,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:background="@drawable/textfeild"
+            android:background="@drawable/textfield"
             android:drawableStart="@drawable/ic_account_circle_black_24dp"
             android:drawablePadding="10dp"
             android:hint="@string/enter_email"
@@ -53,7 +53,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:background="@drawable/textfeild"
+            android:background="@drawable/textfield"
             android:drawableStart="@drawable/ic_lock_outline_black_24dp"
             android:drawablePadding="10dp"
             android:hint="@string/enter_password"
