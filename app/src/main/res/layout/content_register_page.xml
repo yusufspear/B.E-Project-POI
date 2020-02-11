@@ -107,7 +107,6 @@
             android:inputType="textEmailAddress"
             android:paddingStart="20dp"
             android:paddingEnd="0dp"
-
             android:singleLine="true"
             android:textColor="@color/colorBlack"
             android:textColorHighlight="@color/Red"

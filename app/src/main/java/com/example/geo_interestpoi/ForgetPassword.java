@@ -11,6 +11,8 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -44,6 +46,7 @@ public class ForgetPassword extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+
     }
 
     @Override
@@ -59,11 +62,16 @@ public class ForgetPassword extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Intent i=new Intent(this,MainActivity.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
     }
 
     private void forgetPassword(View view) {

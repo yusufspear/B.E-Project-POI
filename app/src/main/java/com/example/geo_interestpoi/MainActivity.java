@@ -1,6 +1,7 @@
 package com.example.geo_interestpoi;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -10,6 +11,8 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -27,6 +30,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -78,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         mAuth=FirebaseAuth.getInstance();
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
@@ -195,6 +201,16 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    private boolean checknetwork(){
+
+        ConnectivityManager manager= (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo=manager.getActiveNetworkInfo();
+        if (networkInfo!=null)
+            return true;
+        else
+            return false;
+    }
+
     private void singInUser(View view) {
 
         if (!validateEmailAddress() | !validatePassword()) {
@@ -208,65 +224,71 @@ public class MainActivity extends AppCompatActivity {
         String password=mPasswordLayout.getEditText().getText().toString().trim();
 //        String[] ans = new String[2];
 //        ans[0]= "1";
-        mAuth.signInWithEmailAndPassword(email,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
+        if (checknetwork()){
+            mAuth.signInWithEmailAndPassword(email,password)
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()){
 
-                            if(Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()){
+                                if(Objects.requireNonNull(mAuth.getCurrentUser()).isEmailVerified()){
 
-                                mRef.child(mAuth.getCurrentUser().getUid()).child("isnew").addValueEventListener(new ValueEventListener() {
+                                    mRef.child(mAuth.getCurrentUser().getUid()).child("isnew").addValueEventListener(new ValueEventListener() {
 
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                        Log.i("Permission","On Data Change Field Execute");
-                                        String isNew;
-                                        isNew = dataSnapshot.getValue(String.class);
+                                            Log.i("Permission","On Data Change Field Execute");
+                                            String isNew;
+                                            isNew = dataSnapshot.getValue(String.class);
 
-                                        if (isNew.equals("true")){
-                                            startActivity(new Intent(MainActivity.this, POI_Set.class));
-                                            Toast.makeText(MainActivity.this,"User Log-in Successfully Please Select POI",Toast.LENGTH_LONG).show();
-                                            finish();
+                                            if (isNew.equals("true")){
+                                                startActivity(new Intent(MainActivity.this, POI_Set.class));
+                                                Toast.makeText(MainActivity.this,"User Log-in Successfully Please Select POI",Toast.LENGTH_LONG).show();
+                                                finish();
 
-                                        }else{
-//                                            updateUI();
-                                            startActivity(new Intent(MainActivity.this, Home.class));
-                                            Toast.makeText(MainActivity.this,"User Log-in Successfully",Toast.LENGTH_LONG).show();
+                                            }else{
+//                                                updateUI();
+                                                startActivity(new Intent(MainActivity.this, Home.class));
+                                                Toast.makeText(MainActivity.this,"User Log-in Successfully",Toast.LENGTH_LONG).show();
 
 
+                                            }
                                         }
-                                    }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                        Log.e("Error", databaseError.getMessage());
-                                    }
-                                });
+                                            Log.e("Error", databaseError.getMessage());
+                                        }
+                                    });
+                                }
+
+                                else{
+                                    Toast.makeText(MainActivity.this,"Please Verify the Email Address",Toast.LENGTH_SHORT).show();
+                                }
+
+                            }else{
+                                hideProgressBar();
+                                if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                    Toast.makeText(MainActivity.this,"Invalid Password",Toast.LENGTH_SHORT).show();
+                                    mOutputText.setText("Invalid Password");
+                                }else if (task.getException() instanceof FirebaseAuthInvalidUserException) {
+                                    Toast.makeText(MainActivity.this,"Email not Exit in Database",Toast.LENGTH_SHORT).show();
+                                    mOutputText.setText("Email NOT Exit");
+                                }
                             }
 
-                            else{
-                                Toast.makeText(MainActivity.this,"Please Verify the Email Address",Toast.LENGTH_SHORT).show();
-                            }
 
-                        }else{
-                            hideProgressBar();
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                Toast.makeText(MainActivity.this,"Invalid Password",Toast.LENGTH_SHORT).show();
-                                mOutputText.setText("Invalid Password");
-                            }else if (task.getException() instanceof FirebaseAuthInvalidUserException) {
-                                Toast.makeText(MainActivity.this,"Email not Exit in Database",Toast.LENGTH_SHORT).show();
-                                mOutputText.setText("Email NOT Exit");
-                            }
                         }
 
 
-                }
+                    });
 
+        }
+        else
+            Toast.makeText(MainActivity.this,"Please Check Internet",Toast.LENGTH_LONG).show();
 
-                });
 
     }
 

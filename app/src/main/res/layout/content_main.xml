@@ -29,6 +29,7 @@
             android:drawablePadding="10dp"
             android:hint="@string/enter_email"
             android:inputType="textEmailAddress"
+            android:textColorHighlight="@color/colorBlack"
             android:paddingStart="20dp"
             android:paddingEnd="15dp"
             android:singleLine="true"

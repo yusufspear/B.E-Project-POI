@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -7,10 +7,20 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <style name="AppTheme.Lighter.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
 
+
+
+    </style>
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+<!--        <item name="colorPrimaryDark">@color/colorBlack</item>-->
+        <item name="android:navigationBarColor">@color/colorWhite</item>
+        <item name="android:navigationBarDividerColor" tools:targetApi="o_mr1">@color/pureGray</item>
+        <item name="android:statusBarColor">@color/colorBlack</item>
+
+
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

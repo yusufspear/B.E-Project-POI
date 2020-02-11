@@ -55,13 +55,19 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_bar"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
+        android:layout_margin="0dp"
         android:elevation="15dp"
         android:gravity="center"
         app:itemIconTint="@color/Blue"
+        app:itemTextColor="@color/Yello"
+        android:background="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_navigation_bar" />
+        app:menu="@menu/bottom_navigation_bar">
+
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
